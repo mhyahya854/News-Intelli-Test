@@ -1,0 +1,1432 @@
+application:
+  name: News Statement Detector
+  version: 1.0.0
+  host: 127.0.0.1
+  port: 8000
+  timezone: Asia/Karachi
+  log_level: INFO
+  analysis_fps: 8
+  data_dir: data
+  diagnostics_dir: data/diagnostics
+  evidence_dir: data/evidence
+  recordings_dir: data/recordings
+  frontend_dist: frontend/dist
+  store_empty_ocr: false
+  live_queue_size: 200
+  archival:
+    enabled: true
+    segment_seconds: 900
+    retention_days: 7
+    cleanup_on_start: true
+  ticker_buffer_window: 5
+  ticker_buffer_seconds: 12.0
+  evidence_jpeg_quality: 92
+  evidence_workers: 2
+  ticker_min_fps: 2.0
+  ocr_preprocessing: true
+database:
+  url: ${NEWS_DATABASE_URL:postgresql+psycopg://postgres:postgres@localhost:5432/news}
+  echo: false
+ocr:
+  engine: paddle
+  mixed_min_confidence: 0.45
+  models:
+    en:
+      paddle_lang: en
+    ur:
+      paddle_lang: ar
+intelligence:
+  thresholds:
+    collect_min_confidence: 0.75
+    review_min_confidence: 0.45
+    minimum_ocr_confidence: 0.45
+    duplicate_window_seconds: 30
+    duplicate_similarity: 0.9
+    context_window_seconds: 12
+    context_max_items: 24
+  triggers:
+    urdu:
+    - نے کہا کہ
+    - نے کہا ہے کہ
+    - انہوں نے کہا کہ
+    - ان کا کہنا ہے کہ
+    - کا کہنا ہے کہ
+    - نے بتایا کہ
+    - ترجمان نے بتایا کہ
+    - نے اعلان کیا کہ
+    - بیان میں کہا کہ
+    - جاری بیان میں کہا کہ
+    - نے کہا
+    - نے کہا ہے
+    - انہوں نے کہا
+    - ان کا کہنا ہے
+    - ان کا کہنا تھا
+    - کا کہنا ہے
+    - کا کہنا تھا
+    - نے بتایا
+    - ترجمان نے بتایا
+    - نے اعلان کیا
+    - نے تصدیق کی
+    - نے تردید کی
+    - کے مطابق
+    - کے بقول
+    - ترجمان کا کہنا ہے
+    - ترجمان نے کہا
+    - بیان میں کہا
+    - جاری بیان میں کہا
+    - میڈیا سے گفتگو کرتے ہوئے کہا
+    - گفتگو کرتے ہوئے کہا
+    - پریس کانفرنس میں کہا
+    - بریفنگ میں کہا
+    - سماعت کے دوران کہا
+    - ریمارکس دیے
+    - نے واضح کیا
+    - نے الزام لگایا
+    - نے مطالبہ کیا
+    - نے خبردار کیا
+    - نے زور دیا
+    - نے بیان دیا
+    - نے بیان جاری کیا
+    - نے حکم دیا
+    - نے فیصلہ دیا
+    - نے فیصلہ کیا
+    - نے قرار دیا
+    - نے ہدایت دی
+    - نے عندیہ دیا
+    - نے اشارہ دیا
+    - نے تجویز دی
+    - نے انکار کیا
+    - نے رد کیا
+    - نے تسلیم کیا
+    - نے اقرار کیا
+    - نے منظوری دی
+    - نے مخالفت کی
+    - نے حمایت کی
+    - نے مذمت کی
+    - نے سراہا
+    - نے یقین دلایا
+    - نے وعدہ کیا
+    - نے دعویٰ کیا
+    - کی جانب سے بیان
+    - کی طرف سے اعلان
+    - انہوں نے بتایا
+    - انہوں نے بتایا کہ
+    - ان کے مطابق
+    - ذرائع کے مطابق
+    - ترجمان کے مطابق
+    - اعلامیے میں کہا گیا
+    - نوٹیفکیشن میں کہا گیا
+    - پریس ریلیز میں کہا گیا
+    - میڈیا سے بات کرتے ہوئے کہا
+    - صحافیوں سے گفتگو کرتے ہوئے کہا
+    - خطاب کرتے ہوئے کہا
+    english:
+    - issued a statement
+    - spokesperson confirmed
+    - spokesperson announced
+    - spokesperson said
+    - according to
+    - in a statement
+    - as per the statement
+    - statement issued
+    - said that
+    - declared that
+    - called for
+    - called on
+    - confirmed
+    - announced
+    - reiterated
+    - emphasized
+    - asserted
+    - alleged
+    - claimed
+    - demanded
+    - rejected
+    - refused
+    - dismissed
+    - condemned
+    - criticized
+    - welcomed
+    - praised
+    - pledged
+    - promised
+    - vowed
+    - assured
+    - warned
+    - urged
+    - revealed
+    - stated
+    - states
+    - declared
+    - denied
+    - denies
+    - told
+    - added
+    - said
+    - says
+  entities:
+  - term: وزیراعظم
+    aliases:
+    - Prime Minister
+    - PM
+    - وزیر اعظم
+    type: title
+  - term: صدر
+    aliases:
+    - President
+    - صدر مملکت
+    type: title
+  - term: وزیر داخلہ
+    aliases:
+    - Interior Minister
+    - Minister of Interior
+    type: title
+  - term: وزیر خارجہ
+    aliases:
+    - Foreign Minister
+    - FM
+    - Minister of Foreign Affairs
+    type: title
+  - term: وزیر خزانہ
+    aliases:
+    - Finance Minister
+    - Minister of Finance
+    type: title
+  - term: وزیراعلیٰ
+    aliases:
+    - Chief Minister
+    - CM
+    - وزیر اعلی
+    type: title
+  - term: گورنر
+    aliases:
+    - Governor
+    type: title
+  - term: وفاقی کابینہ
+    aliases:
+    - Federal Cabinet
+    - Cabinet
+    type: institution
+  - term: پارلیمنٹ
+    aliases:
+    - Parliament
+    - Senate
+    - National Assembly
+    - قومی اسمبلی
+    - سینیٹ
+    type: institution
+  - term: آرمی چیف
+    aliases:
+    - COAS
+    - Chief of Army Staff
+    - Army Chief
+    type: title
+  - term: ISPR
+    aliases:
+    - آئی ایس پی آر
+    - DG ISPR
+    - Director General ISPR
+    - Inter-Services Public Relations
+    type: institution
+  - term: جی ایچ کیو
+    aliases:
+    - GHQ
+    - General Headquarters
+    type: institution
+  - term: آئی ایس آئی
+    aliases:
+    - ISI
+    - DG ISI
+    - Inter-Services Intelligence
+    type: institution
+  - term: وزارت دفاع
+    aliases:
+    - Ministry of Defence
+    - Defence Ministry
+    type: institution
+  - term: چیف جسٹس
+    aliases:
+    - Chief Justice
+    - CJP
+    - Chief Justice of Pakistan
+    type: title
+  - term: سپریم کورٹ
+    aliases:
+    - Supreme Court
+    type: institution
+  - term: ہائی کورٹ
+    aliases:
+    - High Court
+    - Lahore High Court
+    - LHC
+    - Sindh High Court
+    - SHC
+    type: institution
+  - term: نیب
+    aliases:
+    - NAB
+    - National Accountability Bureau
+    type: institution
+  - term: الیکشن کمیشن
+    aliases:
+    - ECP
+    - Election Commission of Pakistan
+    - CEC
+    - Chief Election Commissioner
+    type: institution
+  - term: پی ٹی آئی
+    aliases:
+    - PTI
+    - تحریک انصاف
+    - Pakistan Tehreek-e-Insaf
+    type: institution
+  - term: پی ایم ایل-ن
+    aliases:
+    - PMLN
+    - PML-N
+    - Muslim League
+    - مسلم لیگ
+    type: institution
+  - term: پیپلز پارٹی
+    aliases:
+    - PPP
+    - Pakistan Peoples Party
+    type: institution
+  - term: جے یو آئی
+    aliases:
+    - JUI
+    - JUI-F
+    type: institution
+  - term: ایم کیو ایم
+    aliases:
+    - MQM
+    type: institution
+  - term: عمران خان
+    aliases:
+    - Imran Khan
+    - IK
+    type: person
+  - term: نواز شریف
+    aliases:
+    - Nawaz Sharif
+    - NS
+    type: person
+  - term: شہباز شریف
+    aliases:
+    - Shehbaz Sharif
+    - Shahbaz Sharif
+    type: person
+  - term: آصف علی زرداری
+    aliases:
+    - Asif Ali Zardari
+    - AAZ
+    type: person
+  - term: بلاول بھٹو
+    aliases:
+    - Bilawal Bhutto
+    - Bilawal
+    type: person
+  - term: فضل الرحمان
+    aliases:
+    - Fazlur Rehman
+    - Maulana Fazlur Rehman
+    type: person
+  - term: اسٹیٹ بینک
+    aliases:
+    - SBP
+    - State Bank of Pakistan
+    - Governor SBP
+    type: institution
+  - term: ایف بی آر
+    aliases:
+    - FBR
+    - Federal Board of Revenue
+    type: institution
+  - term: آئی ایم ایف
+    aliases:
+    - IMF
+    - International Monetary Fund
+    type: institution
+  - term: ورلڈ بینک
+    aliases:
+    - World Bank
+    type: institution
+  - term: NEPRA
+    aliases:
+    - نیپرا
+    type: institution
+  - term: OGRA
+    aliases:
+    - اوگرا
+    type: institution
+  - term: PTA
+    aliases:
+    - پی ٹی اے
+    type: institution
+  - term: PEMRA
+    aliases:
+    - پیمرا
+    type: institution
+  - term: اقوام متحدہ
+    aliases:
+    - UN
+    - United Nations
+    - UNSC
+    - UNHRC
+    type: institution
+  - term: وفاقی حکومت
+    aliases:
+    - Federal Government
+    - Government of Pakistan
+    type: institution
+  - term: دفتر خارجہ
+    aliases:
+    - Foreign Office
+    - FO
+    - Foreign Office spokesperson
+    type: institution
+  - term: ترجمان حکومت
+    aliases:
+    - Government spokesperson
+    - government spokesman
+    - government spokeswoman
+    type: title
+  - term: چیف الیکشن کمشنر
+    aliases:
+    - Chief Election Commissioner
+    - CEC
+    type: title
+  - term: چیئرمین سینیٹ
+    aliases:
+    - Senate Chairman
+    - Chairman Senate
+    type: title
+  - term: اسپیکر قومی اسمبلی
+    aliases:
+    - Speaker National Assembly
+    - National Assembly Speaker
+    type: title
+  - term: گورنر اسٹیٹ بینک
+    aliases:
+    - Governor State Bank
+    - Governor SBP
+    type: title
+  - term: چیئرمین ایف بی آر
+    aliases:
+    - FBR Chairman
+    - Chairman FBR
+    type: title
+  - term: ڈی جی آئی ایس پی آر
+    aliases:
+    - DG ISPR
+    - Director General ISPR
+    type: title
+  - term: عدالت
+    aliases:
+    - Court
+    - the court
+    type: institution
+  - term: امریکی حکومت
+    aliases:
+    - US government
+    - United States government
+    - White House
+    - US State Department
+    - State Department
+    - US President
+    - President of the United States
+    type: institution
+  - term: چینی حکومت
+    aliases:
+    - Chinese government
+    - Chinese Foreign Ministry
+    - China Foreign Ministry
+    - Chinese President
+    - Xi Jinping
+    - CPEC Authority
+    type: institution
+  - term: سعودی حکومت
+    aliases:
+    - Saudi government
+    - Saudi Foreign Ministry
+    - Saudi Crown Prince
+    - Mohammed bin Salman
+    type: institution
+  - term: ایرانی حکومت
+    aliases:
+    - Iranian government
+    - Iranian Foreign Ministry
+    - Iranian President
+    type: institution
+  - term: افغان حکومت
+    aliases:
+    - Afghan government
+    - Taliban government
+    - Afghan Foreign Ministry
+    - Taliban spokesperson
+    type: institution
+  - term: بھارتی حکومت
+    aliases:
+    - Indian government
+    - Indian Foreign Ministry
+    - Indian Prime Minister
+    - Narendra Modi
+    type: institution
+  - term: ترک حکومت
+    aliases:
+    - Turkish government
+    - Turkish President
+    - Recep Tayyip Erdogan
+    type: institution
+  - term: متحدہ عرب امارات کی حکومت
+    aliases:
+    - UAE government
+    - UAE President
+    - UAE Foreign Ministry
+    type: institution
+  - term: برطانوی حکومت
+    aliases:
+    - UK government
+    - British government
+    - British Prime Minister
+    - UK Foreign Office
+    type: institution
+  reject_patterns:
+    minimum_text_characters: 15
+    exact:
+    - خبریں
+    - News
+    - براہ راست
+    - Live
+    - بریکنگ نیوز
+    - Breaking News
+    - خصوصی پروگرام
+    - Special Programme
+    contains:
+    - درجہ حرارت
+    - temperature
+    - موسم
+    - weather
+    - بارش
+    - rainfall
+    - گرمی کی لہر
+    - heat wave
+    - رنز
+    - wickets
+    - وکٹ
+    - اوور
+    - scorecard
+    - KSE-100
+    - پوائنٹس اضافہ
+    - پوائنٹس کمی
+    - gold price
+    - silver price
+    - exchange rate
+    - آج کا پروگرام
+    - coming up
+    - channel logo
+    regex:
+    - ^\s*[\d\s.,+\-₨$%]+\s*$
+    - \b\d+\s*(?:runs?|wickets?|overs?|goals?)\b
+    - \d+\s*(?:رنز|وکٹ|اوور|گول)
+    - \b(?:KSE|PSX)\s*[-+]?\d
+    - ^(?:ڈالر|dollar|euro|یورو|pound|پاؤنڈ)\s*[\d.\-+]+$
+    - ^(?:بریکنگ نیوز|breaking news|خبریں|live|براہ راست)\s*$
+translation:
+  cpu_threads: 4
+  max_text_length: 512
+  prefer_engine: opus
+  engines:
+    opus_ur_en:
+      enabled: true
+      repo: Helsinki-NLP/opus-mt-ur-en
+      model_dir: models/translation/opus-ur-en
+    opus_en_ur:
+      enabled: true
+      repo: Helsinki-NLP/opus-mt-en-ur
+      model_dir: models/translation/opus-en-ur
+    indictrans2_ur_en:
+      enabled: false
+      repo: ai4bharat/indictrans2-indic-en-dist-200M
+      model_dir: models/translation/indictrans2-ur-en-200M
+      trust_remote_code: true
+    indictrans2_en_ur:
+      enabled: false
+      repo: ai4bharat/indictrans2-en-indic-dist-200M
+      model_dir: models/translation/indictrans2-en-ur-200M
+      trust_remote_code: true
+clustering:
+  similarity_threshold: 0.72
+  lexical_weight: 0.3
+  entity_weight: 0.4
+  embedding_weight: 0.3
+  max_story_age_hours: 24
+  engine: multilingual-e5-small
+  semantic_threshold: 0.78
+  entity_semantic_threshold: 0.62
+  lexical_threshold: 0.58
+embeddings:
+  model_repo: intfloat/multilingual-e5-small
+  model_dir: models/embeddings/multilingual-e5-small
+  dimension: 384
+  max_length: 256
+keywords:
+  watch_mode: false
+  fuzzy_threshold: 0.88
+  items: []
+channels:
+- id: geo-news
+  name: GEO NEWS
+  enabled: false
+  source: https://www.youtube.com/@geonews/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: ary-news
+  name: ARY NEWS
+  enabled: false
+  source: https://www.youtube.com/@ARYNews/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: dunya-news
+  name: DUNYA NEWS
+  enabled: false
+  source: https://www.youtube.com/@DunyaNews/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: samaa-tv
+  name: SAMAA TV
+  enabled: false
+  source: https://www.youtube.com/@SAMAATV/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: 92-news
+  name: 92 NEWS HD
+  enabled: false
+  source: https://www.youtube.com/@92newshd/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: bol-news
+  name: BOL NEWS
+  enabled: false
+  source: https://www.youtube.com/@bolnewsurdu/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: hum-news
+  name: HUM NEWS
+  enabled: false
+  source: https://www.youtube.com/@HumNewsNetwork/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: channel-24
+  name: CHANNEL 24
+  enabled: false
+  source: https://www.youtube.com/@channel24pk/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: abbtak-news
+  name: ABBTAK NEWS
+  enabled: false
+  source: https://www.youtube.com/@AbbtakNews/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: express-news
+  name: EXPRESS NEWS
+  enabled: false
+  source: https://www.youtube.com/@ExpressNewsOfficial/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: such-tv
+  name: SUCH TV
+  enabled: false
+  source: https://www.youtube.com/@SuchTV/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: public-news
+  name: PUBLIC NEWS
+  enabled: false
+  source: https://www.youtube.com/@publicnewspk/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: neo-tv
+  name: NEO TV
+  enabled: false
+  source: https://www.youtube.com/@NeoNewsPakistan/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: pak-news
+  name: PAK NEWS
+  enabled: false
+  source: https://www.youtube.com/@paknewstv/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
+- id: awaz-tv
+  name: AWAZ TV
+  enabled: false
+  source: https://www.youtube.com/@AwazTVChannel/live
+  loop_file: false
+  reconnect_seconds: 3
+  sample_fps: 8
+  program_pid: null
+  regions:
+  - id: breaking_news
+    label: Breaking News Banner
+    language_mode: mixed
+    x: 0.0
+    y: 0.02
+    width: 1.0
+    height: 0.12
+    sample_fps: 4.0
+    change_threshold: 0.018
+    stable_threshold: 0.006
+    stable_samples: 2
+    minimum_stable_ms: 200
+    minimum_sharpness: 8.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: lower_third
+    label: Speaker / Organisation Lower Third
+    language_mode: mixed
+    x: 0.0
+    y: 0.68
+    width: 0.65
+    height: 0.13
+    sample_fps: 2.0
+    change_threshold: 0.015
+    stable_threshold: 0.005
+    stable_samples: 3
+    minimum_stable_ms: 300
+    minimum_sharpness: 10.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.55
+  - id: ticker
+    label: Ticker
+    language_mode: mixed
+    x: 0.0
+    y: 0.84
+    width: 1.0
+    height: 0.11
+    sample_fps: 2.0
+    change_threshold: 0.025
+    stable_threshold: 0.008
+    stable_samples: 2
+    minimum_stable_ms: 150
+    minimum_sharpness: 6.0
+    drift_window: 12
+    drift_min_samples: 6
+    drift_confidence_threshold: 0.5
