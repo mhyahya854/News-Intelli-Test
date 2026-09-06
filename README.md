@@ -194,9 +194,24 @@ The capabilities of this recovered development baseline have been rigorously val
 
 ## 10. Project & Recovery Status
 
-- **Maturity**: Recovered Development Baseline (Phase 3 Hardened).
+- **Maturity**: Recovered Production-Grade Baseline (Phase 4 Hardened & Phase 5 Consolidated).
 - **Alembic Head**: `20260720_0006` (30 relational tables).
 - **Backend Tests**: 183 passed, 0 failed.
 - **Frontend Tests**: 5 passed, 0 failed.
 - **Licensing**: MIT License (`LICENSE`) with third-party notices (`NOTICE`).
+
+---
+
+## 11. Project Lineage & Historical Documentation
+
+This repository serves as the single current product authority. For full context on the evolutionary lineage, historical specifications, and technical recovery decisions, consult the canonical history area:
+
+- [Project Lineage & Provenance](file:///docs/history/PROJECT_LINEAGE.md): Chronology from early NSD specifications to the Phase 12 modular rewrite and current consolidated baseline.
+- [Recovery & Reconstruction Process](file:///docs/history/RECOVERY_AND_RECONSTRUCTION.md): Forensic recovery methodology, baseline selection, and verification gates.
+- [Architectural Decisions (ADRs)](file:///docs/history/ARCHITECTURAL_DECISIONS.md): Foundational decisions regarding Windows native execution, `/api/v1` + WebSocket transport, and CPU-only OCR.
+- [Superseded Implementations](file:///docs/history/SUPERSEDED_IMPLEMENTATIONS.md): Documentation of abandoned monolithic scripts, SSE prototypes, Docker containerization, and Celery/Redis architectures.
+- [Historical Requirements Reconciliation](file:///docs/history/HISTORICAL_REQUIREMENTS.md): Detailed reconciliation of 21 historical product requirements against the current codebase.
+
+*Note: Raw historical packages, execution transcripts, and forensic artifacts are securely preserved in the private historical archive `mhyahya854/News-Intelli-Test-Archive`.*
+
 

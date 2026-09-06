@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.1-phase.5 — 2026-09-06
+
+### Added
+- Canonical project history documentation under `docs/history/`:
+  - `PROJECT_LINEAGE.md`: Evolutionary narrative from NSD specifications through Phase 12 and the consolidated baseline.
+  - `RECOVERY_AND_RECONSTRUCTION.md`: Forensic audit and multi-phase reconstruction methodology.
+  - `ARCHITECTURAL_DECISIONS.md`: Authoritative record of architectural decisions (native Windows runtime, `/api/v1` + WebSocket, CPU OCR).
+  - `SUPERSEDED_IMPLEMENTATIONS.md`: Detailed documentation of superseded scripts, experimental SSE, Docker, and Celery architectures.
+  - `HISTORICAL_REQUIREMENTS.md`: Comprehensive reconciliation of 21 historical product requirements against current codebase.
+- Updated `README.md` with links to the canonical history suite and confirmation of single product authority.
+
+---
+
 ## 0.12.0-phase.12 — 2026-07-20
 
 ### Added
