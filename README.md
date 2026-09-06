@@ -1,5 +1,7 @@
 # Pakistani News Stream Intelligence Platform
 
+[![Continuous Integration](https://github.com/mhyahya854/News-Intelli-Test/actions/workflows/ci.yml/badge.svg)](https://github.com/mhyahya854/News-Intelli-Test/actions/workflows/ci.yml)
+
 A high-performance broadcast news intelligence system designed to ingest live Pakistani television streams, detect and extract Urdu and English news tickers (*bayaanat*), reconstruct rolling text sentences across video frames, classify statements against a curated bilingual taxonomy, deduplicate reporting into canonical stories, and stream real-time updates to an analyst dashboard.
 
 ---
