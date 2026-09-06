@@ -786,18 +786,17 @@ class PostgresApiRepository:
             .group_by(SentenceCategory.category_id)
             .subquery()
         )
-        unnested_categories = func.unnest(
-            SentenceOccurrence.category_ids
-        ).table_valued("category_id").lateral()
-        observation_counts = (
-            select(unnested_categories.c.category_id, func.count().label("count"))
-            .select_from(SentenceOccurrence)
-            .join(unnested_categories, true())
+        unnested_sub = (
+            select(func.unnest(SentenceOccurrence.category_ids).label("category_id"))
             .where(
                 SentenceOccurrence.calendar_date == pakistan_date,
                 SentenceOccurrence.emitted_live.is_(True),
             )
-            .group_by(unnested_categories.c.category_id)
+            .subquery()
+        )
+        observation_counts = (
+            select(unnested_sub.c.category_id, func.count().label("count"))
+            .group_by(unnested_sub.c.category_id)
             .subquery()
         )
         statement = (
@@ -1020,15 +1019,14 @@ class PostgresApiRepository:
                     func.date(PipelineTrace.observed_at.op("AT TIME ZONE")("Asia/Karachi")) == pakistan_date,
                 )
             )
-            unnested_categories = func.unnest(
-                SentenceOccurrence.category_ids
-            ).table_valued("category_id").lateral()
-            category_rows = session.execute(
-                select(unnested_categories.c.category_id, func.count().label("count"))
-                .select_from(SentenceOccurrence)
-                .join(unnested_categories, true())
+            unnested_sub = (
+                select(func.unnest(SentenceOccurrence.category_ids).label("category_id"))
                 .where(SentenceOccurrence.calendar_date == pakistan_date)
-                .group_by(unnested_categories.c.category_id)
+                .subquery()
+            )
+            category_rows = session.execute(
+                select(unnested_sub.c.category_id, func.count().label("count"))
+                .group_by(unnested_sub.c.category_id)
                 .order_by(func.count().desc())
             ).all()
             stream_rows = session.execute(

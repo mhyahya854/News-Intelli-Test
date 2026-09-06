@@ -25,3 +25,8 @@ tmp/
 diagnostics/
 evidence/
 recordings/
+node_modules/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

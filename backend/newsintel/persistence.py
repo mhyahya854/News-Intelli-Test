@@ -651,7 +651,11 @@ class PostgresStoryRepository(StoryRepository):
 
     def create_story(self, story: CanonicalStory) -> None:
         story_id = _uuid(story.story_id)
-        if self.session.get(Sentence, story_id) is not None:
+        existing_pending = next(
+            (obj for obj in self.session.new if isinstance(obj, Sentence) and obj.id == story_id),
+            None,
+        )
+        if existing_pending is not None or self.session.get(Sentence, story_id) is not None:
             self.update_story(story)
             return
         primary_hash = story_features(story.original_text).exact_hash
@@ -713,6 +717,11 @@ class PostgresStoryRepository(StoryRepository):
         story_id = _uuid(story.story_id)
         sentence = self.session.get(Sentence, story_id, with_for_update=True)
         if sentence is None:
+            sentence = next(
+                (obj for obj in self.session.new if isinstance(obj, Sentence) and obj.id == story_id),
+                None,
+            )
+        if sentence is None:
             self.create_story(story)
             return
         sentence.first_seen_at = min(sentence.first_seen_at, story.first_seen_at)
@@ -741,6 +750,11 @@ class PostgresStoryRepository(StoryRepository):
                 )
             )
         )
+        existing_categories.update(
+            obj.category_id
+            for obj in self.session.new
+            if isinstance(obj, SentenceCategory) and obj.sentence_id == story_id
+        )
         for category_id in sorted(story.category_ids - existing_categories):
             self.session.add(
                 SentenceCategory(
@@ -755,6 +769,11 @@ class PostgresStoryRepository(StoryRepository):
             self.session.scalars(
                 select(SentenceSource.stream_id).where(SentenceSource.sentence_id == story_id)
             )
+        )
+        existing_sources.update(
+            obj.stream_id
+            for obj in self.session.new
+            if isinstance(obj, SentenceSource) and obj.sentence_id == story_id
         )
         for stream_value in sorted(story.source_stream_ids):
             stream_id = _uuid(stream_value)
@@ -788,20 +807,31 @@ class PostgresStoryRepository(StoryRepository):
         )
         if story.embedding:
             if embedding is None:
-                self.session.add(
-                    SentenceEmbedding(
-                        sentence_id=story_id,
-                        model_name=self.embedding_model,
-                        model_revision=self.embedding_revision,
-                        dimensions=len(story.embedding),
-                        embedding_vector=list(story.embedding),
-                    )
+                has_pending_embedding = any(
+                    isinstance(obj, SentenceEmbedding) and obj.sentence_id == story_id
+                    for obj in self.session.new
                 )
+                if not has_pending_embedding:
+                    self.session.add(
+                        SentenceEmbedding(
+                            sentence_id=story_id,
+                            model_name=self.embedding_model,
+                            model_revision=self.embedding_revision,
+                            dimensions=len(story.embedding),
+                            embedding_vector=list(story.embedding),
+                        )
+                    )
             elif story.embedding_count >= current_count:
                 embedding.dimensions = len(story.embedding)
                 embedding.embedding_vector = list(story.embedding)
 
     def add_occurrence(self, occurrence: StoryOccurrence) -> None:
+        if any(
+            isinstance(obj, SentenceOccurrence)
+            and obj.observation_id == occurrence.observation_id
+            for obj in self.session.new
+        ):
+            return
         existing = self.session.scalar(
             select(SentenceOccurrence).where(
                 SentenceOccurrence.observation_id == occurrence.observation_id
@@ -2075,7 +2105,7 @@ def persistence_doctor(*, check_database: bool = False) -> dict[str, Any]:
                 session.execute(text("SELECT 1"))
             report["checks"]["postgresql"] = "ready"
             report["checks"]["schema_revision"] = revision
-            if revision != "20260719_0004":
+            if revision not in {"20260719_0004", "20260719_0005", "20260720_0006"}:
                 report["status"] = "not_ready"
         except Exception as exc:
             report["status"] = "not_ready"

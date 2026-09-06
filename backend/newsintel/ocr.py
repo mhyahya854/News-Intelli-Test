@@ -21,6 +21,7 @@ from .streaming import FrameEnvelope
 os.environ.setdefault("FLAGS_use_mkldnn", "0")
 os.environ.setdefault("FLAGS_enable_pir_api", "0")
 os.environ.setdefault("FLAGS_enable_pir_in_executor", "0")
+os.environ.setdefault("PADDLE_PDX_ENABLE_MKLDNN_BYDEFAULT", "False")
 
 ARABIC_RANGES = (
     (0x0600, 0x06FF),
@@ -949,7 +950,7 @@ def ocr_runtime_config_from_env() -> OCRConfig:
 
 def ocr_doctor(load_models: bool = False) -> dict[str, Any]:
     dependencies: dict[str, Any] = {}
-    for module_name in ("numpy", "cv2", "paddle", "paddleocr", "torch", "easyocr"):
+    for module_name in ("numpy", "cv2", "torch", "paddle", "paddleocr", "easyocr"):
         try:
             module = __import__(module_name)
             details: dict[str, Any] = {

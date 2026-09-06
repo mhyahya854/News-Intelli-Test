@@ -1,0 +1,38 @@
+Pakistani News Stream Intelligence
+Copyright (c) 2026 Pakistani News Stream Intelligence Contributors
+
+This product includes software developed by third parties:
+
+1. PaddleOCR & PaddlePaddle
+   - License: Apache License 2.0
+   - Copyright: 2020-2026 PaddleOCR Authors
+   - Website: https://github.com/PaddlePaddle/PaddleOCR
+
+2. PyTorch
+   - License: Modified BSD License
+   - Copyright: 2016-2026 Facebook, Inc. / Meta Platforms, Inc. and PyTorch Contributors
+   - Website: https://pytorch.org
+
+3. EasyOCR
+   - License: Apache License 2.0
+   - Copyright: 2020 JaidedAI
+   - Website: https://github.com/JaidedAI/EasyOCR
+
+4. FastAPI & Starlette
+   - License: MIT License
+   - Copyright: 2018-2026 Sebastián Ramírez
+   - Website: https://fastapi.tiangolo.com
+
+5. SQLAlchemy & Alembic
+   - License: MIT License
+   - Copyright: 2005-2026 Michael Bayer and contributors
+   - Website: https://www.sqlalchemy.org
+
+6. React & Vite
+   - License: MIT License
+   - Copyright: Meta Platforms, Inc. and Vite Contributors
+   - Website: https://react.dev / https://vite.dev
+
+7. yt-dlp
+   - License: The Unlicense (Public Domain)
+   - Website: https://github.com/yt-dlp/yt-dlp
