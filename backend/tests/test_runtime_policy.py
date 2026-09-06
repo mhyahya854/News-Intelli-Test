@@ -6,8 +6,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def test_setup_installs_pytorch_from_official_cpu_index() -> None:
     setup = (PROJECT_ROOT / "setup.ps1").read_text(encoding="utf-8")
-    assert "torch==2.12.1 torchvision==0.27.1" in setup
-    assert "https://download.pytorch.org/whl/cpu" in setup
+    torch_reqs = (PROJECT_ROOT / "backend" / "requirements-torch-cpu.txt").read_text(encoding="utf-8")
+    assert "requirements-torch-cpu.txt" in setup
+    assert "torch==2.14.0" in torch_reqs
+    assert "torchvision==0.29.0" in torch_reqs
+    assert "https://download.pytorch.org/whl/cpu" in torch_reqs
     assert "CUDA packages are intentionally forbidden" in setup
 
 

@@ -14,7 +14,7 @@ A high-performance broadcast news intelligence system designed to ingest live Pa
 - **Machine Translation**: Automated Urdu $\leftrightarrow$ English neural translation via CTranslate2 with micro-batching and transparent fallback to source text.
 - **PostgreSQL Persistence & Outbox**: ACID-compliant relational storage across 30 tables with transactional Outbox pattern and local file-spool fallback during database maintenance.
 - **Real-Time Live Updates**: WebSocket push streaming (`/api/v1/ws/live`) delivering initial state snapshots and instant event notifications (`new_sentence`, `canonical_story_created`).
-- **Analyst Dashboard**: Modern React 18 + Vite dashboard with virtualized live feeds, category filtering, search, and system health telemetry.
+- **Analyst Dashboard**: Modern React 19 + Vite dashboard with virtualized live feeds, category filtering, search, and system health telemetry.
 
 ---
 
@@ -39,7 +39,7 @@ graph TD
 
 - **Operating System**: Windows 10/11 x64 or Linux x64.
 - **Python**: CPython **3.12.x** (x64 required).
-- **Node.js**: Node.js **18+** or **20+** (LTS recommended) and npm.
+- **Node.js**: Node.js **20.19+** or **22.12+** and npm.
 - **PostgreSQL**: PostgreSQL **16** or **17** running locally or accessible via network.
 - **FFmpeg**: `ffmpeg` (version 7.x or 8.x) installed and available on system PATH.
 
@@ -82,8 +82,9 @@ Key environment variables in `.env`:
    *Note: PyTorch CPU wheels must be installed from the official index to avoid pulling multi-gigabyte CUDA dependencies.*
 
    ```powershell
-   pip install torch==2.14.0+cpu torchvision==0.19.0+cpu torchaudio==2.14.0+cpu --index-url https://download.pytorch.org/whl/cpu
+   pip install -r backend/requirements-torch-cpu.txt
    ```
+   *(Installs `torch==2.14.0` and `torchvision==0.29.0` via `https://download.pytorch.org/whl/cpu`)*
 
 3. **Install application dependencies**:
 
@@ -177,7 +178,7 @@ The capabilities of this recovered development baseline have been rigorously val
 | **Story Deduplication (Lexical)** | **`VERIFIED`** | Exact match, token overlap, and sliding-window deduplication verified against multi-observation streams. |
 | **PostgreSQL Persistence & Outbox** | **`VERIFIED`** | Alembic migration head `20260720_0006` (30 tables). Identity map dedup, transactional Outbox, and local spool failover all verified against real PostgreSQL 17. |
 | **REST API & WebSocket Streaming** | **`VERIFIED`** | FastAPI endpoints (`/api/v1/feed`, `/api/v1/categories`, `/api/v1/stats`) and WebSocket (`/api/v1/ws/live` snapshot + events) validated. |
-| **Analyst Dashboard Frontend** | **`VERIFIED`** | React 18 + Vite dashboard with reverse proxy to backend port 8001; builds cleanly with `npm run build` and passes `npm test`. |
+| **Analyst Dashboard Frontend** | **`VERIFIED`** | React 19 + Vite dashboard with reverse proxy to backend port 8001; builds cleanly with `npm run build` and passes `npm test`. |
 | **Real Product Pipeline E2E** | **`VERIFIED`** | Production end-to-end test (`test_real_pipeline_e2e.py`) exercises FrameBus → OCR → Reconstruction → Taxonomy → Persistence → Outbox → API without mock business logic. |
 | **Machine Translation (Urdu ↔ English)** | **`PARTIAL`** | Architecture, micro-batching, and transparent source-preservation fallback are fully implemented and verified. Full neural inference requires mounting CTranslate2 model weights under `models/translation/`. |
 | **Video Stream Ingestion** | **`PARTIAL`** | FFmpeg CPU frame extraction, JPEG stream parsing, and cadence controls verified with synthetic broadcast video fixtures. Remote YouTube live HLS capture (`yt-dlp`) depends on external network connectivity and CDN availability. |

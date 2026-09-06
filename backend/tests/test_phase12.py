@@ -72,8 +72,9 @@ def test_phase12_openapi_contains_new_sharing_and_admin_routes(monkeypatch) -> N
 
 
 def test_frontend_places_runtime_controls_in_admin_and_reuses_sharebar() -> None:
-    source = Path("frontend/src/main.jsx").read_text(encoding="utf-8")
-    api = Path("frontend/src/api.js").read_text(encoding="utf-8")
+    project_root = Path(__file__).resolve().parents[2]
+    source = (project_root / "frontend/src/main.jsx").read_text(encoding="utf-8")
+    api = (project_root / "frontend/src/api.js").read_text(encoding="utf-8")
     assert "function ShareBar" in source
     assert "shareOccurrence" in api and "shareSentence" in api and "shareSummary" in api
     assert "function AdminPage" in source
@@ -85,4 +86,4 @@ def test_frontend_places_runtime_controls_in_admin_and_reuses_sharebar() -> None
     assert "client.createStream" not in public_prefix
     assert "client.createKeyword" not in public_prefix
     assert "client.createCategory" not in public_prefix
-    assert "gradient" not in Path("frontend/src/styles.css").read_text(encoding="utf-8").lower()
+    assert "gradient" not in (project_root / "frontend/src/styles.css").read_text(encoding="utf-8").lower()

@@ -1,0 +1,104 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (Node 22)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies (clean)
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm test
+
+      - name: Build frontend production bundle
+        run: npm run build
+
+  backend:
+    name: Backend (Python 3.12 + PostgreSQL 17)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: ci_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements-torch-cpu.txt
+            backend/requirements.txt
+
+      - name: Install system dependencies (FFmpeg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg libgomp1
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install authoritative CPU PyTorch
+        run: pip install -r backend/requirements-torch-cpu.txt
+
+      - name: Install backend requirements
+        run: pip install -r backend/requirements.txt
+
+      - name: Verify dependencies (pip check)
+        run: pip check
+
+      - name: Run Alembic migrations and seed taxonomy
+        env:
+          DATABASE_URL: postgresql://ci_user:ci_password@localhost:5432/ci_test_db
+          PYTHONPATH: backend
+        run: |
+          cd backend
+          alembic upgrade head
+          python -m newsintel.seed
+
+      - name: Run backend test suite
+        env:
+          DATABASE_URL: postgresql://ci_user:ci_password@localhost:5432/ci_test_db
+          ADMIN_PASSWORD: ci_test_admin_password
+          API_CURSOR_SECRET: ci_test_cursor_secret
+          ADMIN_TOKEN_SECRET: ci_test_token_secret
+          PYTHONPATH: backend
+        run: pytest -v

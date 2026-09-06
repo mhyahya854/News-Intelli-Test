@@ -10,7 +10,7 @@ if (-not (Test-Path "frontend\node_modules")) { throw "Frontend dependencies are
 $env:PYTHONPATH = Join-Path $Root "backend"
 
 $backend = Start-Process -FilePath ".\.venv\Scripts\python.exe" -ArgumentList @(
-    "-m", "uvicorn", "app:app", "--app-dir", "backend", "--host", "127.0.0.1", "--port", "8000", "--reload"
+    "-m", "uvicorn", "app:app", "--app-dir", "backend", "--host", "127.0.0.1", "--port", "8001", "--reload"
 ) -NoNewWindow -PassThru
 
 $frontend = Start-Process -FilePath "npm.cmd" -ArgumentList @(
@@ -21,8 +21,8 @@ $summary = Start-Process -FilePath ".\.venv\Scripts\python.exe" -ArgumentList @(
     "-m", "newsintel.summarization_cli", "worker", "--poll-seconds", "10"
 ) -NoNewWindow -PassThru
 
-Write-Host "Backend:  http://127.0.0.1:8000/docs"
-Write-Host "WebSocket: ws://127.0.0.1:8000/api/v1/ws/live"
+Write-Host "Backend:  http://127.0.0.1:8001/docs"
+Write-Host "WebSocket: ws://127.0.0.1:8001/api/v1/ws/live"
 Write-Host "Frontend: http://127.0.0.1:5173"
 Write-Host "Summary worker: five-minute additive bilingual summaries"
 Write-Host "The backend process also runs the transactional-outbox WebSocket pump."

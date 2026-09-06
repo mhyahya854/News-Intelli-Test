@@ -34,7 +34,7 @@ if (-not (Test-Path ".venv")) {
 & .\.venv\Scripts\python.exe -m pip install --upgrade pip
 
 Write-Host "Installing the CPU-only PyTorch runtime (CUDA packages are intentionally forbidden)..."
-& .\.venv\Scripts\python.exe -m pip install torch==2.12.1 torchvision==0.27.1 --index-url https://download.pytorch.org/whl/cpu
+& .\.venv\Scripts\python.exe -m pip install -r backend\requirements-torch-cpu.txt
 if ($LASTEXITCODE -ne 0) { throw "CPU-only PyTorch installation failed." }
 
 & .\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
